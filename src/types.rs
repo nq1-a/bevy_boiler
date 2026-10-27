@@ -66,7 +66,7 @@ impl CameraOffset {
 
 impl Default for CameraOffset {
     fn default() -> Self
-        {Self(Vec3::ZERO.clone())}
+        {Self(Vec3::ZERO)}
 }
 
 #[derive(Component)]
