@@ -1,5 +1,3 @@
-use std::f32::consts::FRAC_PI_2;
-
 use bevy::{
     input::mouse::AccumulatedMouseMotion,
     window::{CursorGrabMode, CursorOptions},
@@ -7,13 +5,10 @@ use bevy::{
 };
 use bevy_rapier3d::prelude::*;
 
+mod consts;
 mod types;
+use consts::*;
 use types::*;
-
-static X0: f32 = 10.0;
-static Y0: f32 = 5.0;
-static Z0: f32 = 0.0;
-static RX_MAX: f32 = FRAC_PI_2 - 0.01;
 
 fn main() {
     App::new()
@@ -45,16 +40,12 @@ fn setup(
 
     // Add player
     commands.spawn((
-        Player,
-        RigidBody::Dynamic,
-        Collider::capsule_y(0.25, 0.25),
-        Transform::from_xyz(X0, Y0, Z0).looking_at(Y0 * Vec3::Y, Vec3::Y),
+        Player::base(),
     ));
 
     // Add camera
     commands.spawn((
-        Camera3d::default(),
-        Transform::from_xyz(X0, Y0, Z0).looking_at(Y0 * Vec3::Y, Vec3::Y),
+        FPCamera::base(),
     ));
 
     // Add ground
@@ -86,16 +77,16 @@ fn move_player(
     time: Res<Time<Fixed>>,
     kb_input: Res<ButtonInput<KeyCode>>,
     mouse_dp: Res<AccumulatedMouseMotion>,
-    plr: Single<&mut Transform, With<Player>>,
-    cam: Single<&mut Transform, (With<Camera3d>, Without<Player>)>,
+    plr: Single<(&mut Transform, &Velocity, &mut ExternalImpulse), With<Player>>,
+    cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<Camera3d>, Without<Player>)>,
 ) {
-    let mut plr_t = plr.into_inner();
-    let mut cam_t = cam.into_inner();
+    let (mut plr_t, plr_v, mut plr_imp) = plr.into_inner();
+    let (mut cam_t, cam_o, cam_s) = cam.into_inner();
 
     // Rotation
     let delta = mouse_dp.delta;
-    let delta_ry = -delta.x * 0.0025;
-    let delta_rx = -delta.y * 0.0025;
+    let delta_ry = -delta.x * cam_s.0.x;
+    let delta_rx = -delta.y * cam_s.0.y;
     let (mut ry, mut rx, _) = cam_t.rotation.to_euler(EulerRot::YXZ);
 
     if delta != Vec2::ZERO {
@@ -113,14 +104,16 @@ fn move_player(
     let mut rm: f32 = 0.0;
     let mut sm: f32 = 0.0;
 
-    if kb_input.pressed(KeyCode::KeyW) {rm += 1.0;}
-    if kb_input.pressed(KeyCode::KeyS) {rm -= 1.0;}
-    if kb_input.pressed(KeyCode::KeyA) {sm += 1.0;}
-    if kb_input.pressed(KeyCode::KeyD) {sm -= 1.0;}
+    if kb_input.pressed(KeyCode::KeyW) {rm += PLR_DV;}
+    if kb_input.pressed(KeyCode::KeyS) {rm -= PLR_DV;}
+    if kb_input.pressed(KeyCode::KeyA) {sm += PLR_DV;}
+    if kb_input.pressed(KeyCode::KeyD) {sm -= PLR_DV;}
 
     let dv: Vec3 = (rm * ru + sm * su).normalize_or_zero();
     plr_t.translation += time.delta_secs() * dv;
 
     // Update translation
-    cam_t.translation = plr_t.translation;
+    if kb_input.pressed(KeyCode::Space) && plr_v.linear.y.abs() < PLR_EJ
+        {plr_imp.impulse = Vec3::new(0.0, PLR_DH, 0.0);}
+    cam_t.translation = plr_t.translation + cam_o.0;
 }
