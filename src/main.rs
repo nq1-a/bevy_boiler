@@ -74,12 +74,14 @@ fn setup(
 }
 
 fn move_player(
+    phys_ctx: ReadRapierContext,
     time: Res<Time<Fixed>>,
     kb_input: Res<ButtonInput<KeyCode>>,
     mouse_dp: Res<AccumulatedMouseMotion>,
     plr: Single<(&mut Transform, &Velocity, &mut ExternalImpulse), With<Player>>,
     cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<Camera3d>, Without<Player>)>,
 ) {
+    let phys_ctx = phys_ctx.single().unwrap();
     let (mut plr_t, plr_v, mut plr_imp) = plr.into_inner();
     let (mut cam_t, cam_o, cam_s) = cam.into_inner();
 
@@ -109,7 +111,8 @@ fn move_player(
     if kb_input.pressed(KeyCode::KeyA) {sm += PLR_DV;}
     if kb_input.pressed(KeyCode::KeyD) {sm -= PLR_DV;}
 
-    let dv: Vec3 = (rm * ru + sm * su).normalize_or_zero();
+    let mut dv: Vec3 = (rm * ru + sm * su).normalize_or_zero();
+    if kb_input.pressed(KeyCode::ShiftLeft) {dv *= PLR_SM;}
     plr_t.translation += time.delta_secs() * dv;
 
     // Update translation

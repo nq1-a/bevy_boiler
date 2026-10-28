@@ -10,10 +10,12 @@ type BasePlayer = (
     Player,
     RigidBody,
     Collider,
+    ContactSkin,
     Transform,
     ExternalImpulse,
     Velocity,
     Damping,
+    Friction,
 );
 
 impl Player {
@@ -22,12 +24,17 @@ impl Player {
             Self,
             RigidBody::Dynamic,
             Collider::capsule_y(PLR_H4, PLR_H4),
+            ContactSkin(0.01),
             Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
             ExternalImpulse::default(),
             Velocity::default(),
             Damping {
-                linear_damping: 1.2,
+                linear_damping: 1.5,
                 angular_damping: 1.0,
+            },
+            Friction {
+                coefficient: 0.7,
+                combine_rule: CoefficientCombineRule::Average,
             },
         )
     }
@@ -79,5 +86,5 @@ impl CameraSensitivity {
 
 impl Default for CameraSensitivity {
     fn default() -> Self
-        {Self(Vec2::new(CAM_SX, CAM_SY))}
+        {Self::new(CAM_SX, CAM_SY)}
 }
