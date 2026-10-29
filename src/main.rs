@@ -126,7 +126,7 @@ fn move_player(
             Vec3::NEG_Y,
             PLR_H2 + PLR_JE,
             true,
-            QueryFilter::exclude_dynamic().exclude_rigid_body(plr_ent),
+            QueryFilter::default().exclude_rigid_body(plr_ent),
         ).is_some()
     {
         plr_imp.impulse = Vec3::new(0.0, PLR_DH, 0.0);
