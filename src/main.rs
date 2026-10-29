@@ -78,11 +78,11 @@ fn move_player(
     time: Res<Time<Fixed>>,
     kb_input: Res<ButtonInput<KeyCode>>,
     mouse_dp: Res<AccumulatedMouseMotion>,
-    plr: Single<(&mut Transform, &Velocity, &mut ExternalImpulse), With<Player>>,
+    plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<Player>>,
     cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<Camera3d>, Without<Player>)>,
 ) {
     let phys_ctx = phys_ctx.single().unwrap();
-    let (mut plr_t, plr_v, mut plr_imp) = plr.into_inner();
+    let (plr_ent, mut plr_jc, mut plr_t, mut plr_imp) = plr.into_inner();
     let (mut cam_t, cam_o, cam_s) = cam.into_inner();
 
     // Rotation
@@ -103,6 +103,7 @@ fn move_player(
     let su = ru.rotate_y(FRAC_PI_2);
 
     // Calculate translation
+    let dt = time.delta_secs();
     let mut rm: f32 = 0.0;
     let mut sm: f32 = 0.0;
 
@@ -113,10 +114,24 @@ fn move_player(
 
     let mut dv: Vec3 = (rm * ru + sm * su).normalize_or_zero();
     if kb_input.pressed(KeyCode::ShiftLeft) {dv *= PLR_SM;}
-    plr_t.translation += time.delta_secs() * dv;
+    plr_t.translation += dt * dv;
 
     // Update translation
-    if kb_input.pressed(KeyCode::Space) && plr_v.linear.y.abs() < PLR_EJ
-        {plr_imp.impulse = Vec3::new(0.0, PLR_DH, 0.0);}
+    plr_jc.update(dt);
+    println!("{}", plr_jc.remaining());
+    if  kb_input.pressed(KeyCode::Space) &&
+        plr_jc.remaining() == 0.0 &&
+        phys_ctx.cast_ray(
+            plr_t.translation,
+            Vec3::NEG_Y,
+            PLR_H2 + PLR_JE,
+            true,
+            QueryFilter::exclude_dynamic().exclude_rigid_body(plr_ent),
+        ).is_some()
+    {
+        plr_imp.impulse = Vec3::new(0.0, PLR_DH, 0.0);
+        plr_jc.reset();
+    }
+
     cam_t.translation = plr_t.translation + cam_o.0;
 }

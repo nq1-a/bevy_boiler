@@ -11,15 +11,18 @@ pub static CAM_Y0: f32 = 0.375;
 
 // PLR_DH - Jump height scalar
 // PLR_DV - Walking speed scalar
-// PLR_EJ - Maximum error bound for v_y ~ 0
-// PLR_H, PLR_H4 - Player height and quarter-height
+// PLR_H, PLR_H2, PLR_H4 - Player height portions
+// PLR_JC - Cooldown between jumps
+// PLR_JE - Gap for raycast with ground during jump
 // PLR_SM - Sprint speed scalar
 // PLR_X0, PLR_Y0, PLR_Z0 - Player starting position
 pub static PLR_DH: f32 = 0.75;
 pub static PLR_DV: f32 = 2.0;
-pub static PLR_EJ: f32 = 0.001;
 pub static PLR_H:  f32 = 1.0;
+pub static PLR_H2: f32 = 0.5 * PLR_H;
 pub static PLR_H4: f32 = 0.25 * PLR_H;
+pub static PLR_JC: f32 = 0.2;
+pub static PLR_JE: f32 = 0.01;
 pub static PLR_SM: f32 = 1.5;
 pub static PLR_X0: f32 = 10.0;
 pub static PLR_Y0: f32 = 5.0;

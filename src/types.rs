@@ -16,6 +16,7 @@ type BasePlayer = (
     Velocity,
     Damping,
     Friction,
+    JumpCooldown,
 );
 
 impl Player {
@@ -36,7 +37,27 @@ impl Player {
                 coefficient: 0.7,
                 combine_rule: CoefficientCombineRule::Average,
             },
+            JumpCooldown::new(PLR_JC),
         )
+    }
+}
+
+#[derive(Component)]
+pub struct JumpCooldown(f32, f32);
+
+impl JumpCooldown {
+    pub fn new(length: f32) -> Self
+        {Self(length, length)}
+
+    pub fn remaining(&self) -> f32
+        {self.1}
+
+    pub fn update(&mut self, dt: f32) {
+        self.1 = (self.1 - dt).max(0.0);
+    }
+
+    pub fn reset(&mut self) {
+        self.1 = self.0;
     }
 }
 
