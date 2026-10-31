@@ -48,10 +48,24 @@ fn setup(
         FPCamera::base(),
     ));
 
+    // Add light
+    commands.spawn((
+        DirectionalLight {
+            color: Color::srgb(0.6, 0.63, 0.7),
+            shadow_maps_enabled: true,
+            ..default()
+        },
+        Transform::from_xyz(0.0, 0.0, 0.0).looking_at(Vec3::new(0.3, -1.0, 0.3), Vec3::Y),
+    ));
+
     // Add ground
     commands.spawn((
         Collider::cuboid(100.0, 2.0, 100.0),
         Transform::from_xyz(0.0, -1.0, 0.0),
+        Friction {
+            coefficient: 0.5,
+            ..default()
+        },
     ));
 
     // Add objects
@@ -118,7 +132,7 @@ fn move_player(
 
     // Update translation
     plr_jc.update(dt);
-    println!("{}", plr_jc.remaining());
+
     if  kb_input.pressed(KeyCode::Space) &&
         plr_jc.remaining() == 0.0 &&
         phys_ctx.cast_ray(

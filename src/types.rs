@@ -16,6 +16,7 @@ type BasePlayer = (
     Velocity,
     Damping,
     Friction,
+    LockedAxes,
     JumpCooldown,
 );
 
@@ -25,7 +26,7 @@ impl Player {
             Self,
             RigidBody::Dynamic,
             Collider::capsule_y(PLR_H4, PLR_H4),
-            ContactSkin(PLR_JE),
+            ContactSkin(PLR_JE / 2.0),
             Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
             ExternalImpulse::default(),
             Velocity::default(),
@@ -34,9 +35,10 @@ impl Player {
                 angular_damping: 1.0,
             },
             Friction {
-                coefficient: 0.7,
-                combine_rule: CoefficientCombineRule::Average,
+                coefficient: 0.65,
+                ..default()
             },
+            LockedAxes::from_bits(40u8).unwrap(),
             JumpCooldown::new(PLR_JC),
         )
     }

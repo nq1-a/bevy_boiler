@@ -1,6 +1,6 @@
 pub use std::f32::consts::FRAC_PI_2;
 
-// RX_MAX - Maximum camera pitch
+// RX_MAX - Maximum controller pitch
 pub static RX_MAX: f32 = FRAC_PI_2 - 0.01;
 
 // CAM_SX, CAM_SY - Sensitivy of camera on both axes
