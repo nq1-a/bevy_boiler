@@ -25,7 +25,7 @@ impl Player {
             Self,
             RigidBody::Dynamic,
             Collider::capsule_y(PLR_H4, PLR_H4),
-            ContactSkin(0.01),
+            ContactSkin(PLR_JE),
             Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
             ExternalImpulse::default(),
             Velocity::default(),
