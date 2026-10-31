@@ -16,13 +16,13 @@ pub static CAM_Y0: f32 = 0.375;
 // PLR_JE - Gap for raycast with ground during jump
 // PLR_SM - Sprint speed scalar
 // PLR_X0, PLR_Y0, PLR_Z0 - Player starting position
-pub static PLR_DH: f32 = 0.75;
+pub static PLR_DH: f32 = 0.5;
 pub static PLR_DV: f32 = 2.0;
 pub static PLR_H:  f32 = 1.0;
 pub static PLR_H2: f32 = 0.5 * PLR_H;
 pub static PLR_H4: f32 = 0.25 * PLR_H;
 pub static PLR_JC: f32 = 0.2;
-pub static PLR_JE: f32 = 0.005;
+pub static PLR_JE: f32 = 0.002;
 pub static PLR_SM: f32 = 1.5;
 pub static PLR_X0: f32 = 10.0;
 pub static PLR_Y0: f32 = 5.0;
