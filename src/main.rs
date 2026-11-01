@@ -63,12 +63,20 @@ fn setup(
         Collider::cuboid(100.0, 2.0, 100.0),
         Transform::from_xyz(0.0, -1.0, 0.0),
         Friction {
-            coefficient: 0.5,
+            coefficient: GLB_FD,
             ..default()
         },
     ));
 
     // Add objects
+    commands.spawn((
+        RigidBody::Fixed,
+        Collider::ball(0.5),
+        Mesh3d(ball.clone()),
+        MeshMaterial3d(mat1.clone()),
+        Transform::from_xyz(0.0, 10.0, 0.0),
+    ));
+
     commands.spawn((
         RigidBody::Dynamic,
         Collider::ball(0.5),
@@ -76,14 +84,6 @@ fn setup(
         Mesh3d(ball.clone()),
         MeshMaterial3d(mat1.clone()),
         Transform::from_xyz(0.0, 4.0, 0.0),
-    ));
-
-    commands.spawn((
-        RigidBody::Fixed,
-        Collider::ball(0.5),
-        Mesh3d(ball.clone()),
-        MeshMaterial3d(mat1.clone()),
-        Transform::from_xyz(0.0, 10.0, 0.0),
     ));
 }
 
@@ -107,7 +107,7 @@ fn move_player(
 
     if delta != Vec2::ZERO {
         ry =  ry + delta_ry;
-        rx = (rx + delta_rx).clamp(-RX_MAX, RX_MAX);
+        rx = (rx + delta_rx).clamp(-GLB_RX, GLB_RX);
     }
 
     plr_t.rotation = Quat::from_euler(EulerRot::YXZ, ry, 0.0, 0.0);

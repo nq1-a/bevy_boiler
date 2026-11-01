@@ -1,7 +1,9 @@
 pub use std::f32::consts::FRAC_PI_2;
 
-// RX_MAX - Maximum controller pitch
-pub static RX_MAX: f32 = FRAC_PI_2 - 0.01;
+// GLB_FD - Default friction
+// GLB_RX - Maximum controller pitch
+pub static GLB_FD: f32 = 0.6;
+pub static GLB_RX: f32 = FRAC_PI_2 - 0.01;
 
 // CAM_SX, CAM_SY - Sensitivy of camera on both axes
 // CAM_Y0 - Starting camera offset from player center
@@ -9,6 +11,7 @@ pub static CAM_SX: f32 = 0.0025;
 pub static CAM_SY: f32 = 0.0025;
 pub static CAM_Y0: f32 = 0.375;
 
+// PLR_CE - Contact skin thickness / PLR_JE
 // PLR_DH - Jump height scalar
 // PLR_DV - Walking speed scalar
 // PLR_H, PLR_H2, PLR_H4 - Player height portions
@@ -16,6 +19,7 @@ pub static CAM_Y0: f32 = 0.375;
 // PLR_JE - Gap for raycast with ground during jump
 // PLR_SM - Sprint speed scalar
 // PLR_X0, PLR_Y0, PLR_Z0 - Player starting position
+pub static PLR_CE: f32 = 0.83;
 pub static PLR_DH: f32 = 0.5;
 pub static PLR_DV: f32 = 2.0;
 pub static PLR_H:  f32 = 1.0;
