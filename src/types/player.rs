@@ -19,12 +19,12 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn base() -> Player {
+    pub fn base(mesh: &MeshCarrier) -> Player {
         Player {
             core: PlayerTag,
             phys: PhysicsObject::base(
                 RigidBody::Dynamic,
-                Collider::capsule_y(PLR_H4, PLR_H4),
+                mesh,
                 Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
             ),
             skin: ContactSkin(PLR_CE * PLR_JE),

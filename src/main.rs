@@ -7,6 +7,7 @@ use bevy_rapier3d::prelude::*;
 
 mod consts;
 mod types;
+
 use consts::*;
 use types::*;
 
@@ -35,11 +36,12 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // Load meshes & materials
-    let ball = meshes.add(Sphere::new(0.5));
+    let capsule = MeshCarrier::new(&mut meshes, Capsule3d::new(PLR_H4, PLR_H4));
+    let ball = MeshCarrier::new(&mut meshes, Sphere::new(0.5));
     let mat1 = materials.add(Color::WHITE);
 
     // Add player & camera
-    commands.spawn(Player::base());
+    commands.spawn(Player::base(&capsule));
     commands.spawn(FPCamera::base());
 
     // Add light
@@ -66,28 +68,26 @@ fn setup(
     commands.spawn((
         PhysicsObject::base(
             RigidBody::Fixed,
-            Collider::ball(0.5),
+            &ball,
             Transform::from_xyz(0.0, 10.0, 0.0),
         ),
-        Mesh3d(ball.clone()),
         MeshMaterial3d(mat1.clone()),
     ));
 
     commands.spawn((
         PhysicsObject::base(
             RigidBody::Dynamic,
-            Collider::ball(0.5),
+            &ball,
             Transform::from_xyz(0.0, 4.0, 0.0),
         ),
         Restitution::coefficient(1.0),
-        Mesh3d(ball.clone()),
         MeshMaterial3d(mat1.clone()),
     ));
 }
 
 fn move_player(
     phys_ctx: ReadRapierContext,
-    time: Res<Time<Fixed>>,
+    time: Res<Time>,
     kb_input: Res<ButtonInput<KeyCode>>,
     mouse_dp: Res<AccumulatedMouseMotion>,
     plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<PlayerTag>>,

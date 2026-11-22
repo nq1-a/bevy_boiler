@@ -1,8 +1,7 @@
 pub mod camera;
-pub use camera::*;
-
 pub mod object;
-pub use object::*;
-
 pub mod player;
+
+pub use camera::*;
+pub use object::*;
 pub use player::*;
