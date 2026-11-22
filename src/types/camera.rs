@@ -3,25 +3,26 @@ use bevy::prelude::*;
 use crate::consts::*;
 
 #[derive(Component)]
-pub struct FPCamera;
+pub struct FPCameraTag;
 
-type BaseFPCamera = (
-    FPCamera,
-    Camera3d,
-    CameraOffset,
-    CameraSensitivity,
-    Transform,
-);
+#[derive(Bundle)]
+pub struct FPCamera {
+    pub core: FPCameraTag,
+    pub camera: Camera3d,
+    pub offset: CameraOffset,
+    pub sensitivity: CameraSensitivity,
+    pub transform: Transform,
+}
 
 impl FPCamera {
-    pub fn base() -> BaseFPCamera {
-        (
-            Self,
-            Camera3d::default(),
-            CameraOffset::new(0.0, CAM_Y0, 0.0),
-            CameraSensitivity::default(),
-            Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
-        )
+    pub fn base() -> FPCamera {
+        FPCamera {
+            core: FPCameraTag,
+            camera: Camera3d::default(),
+            offset: CameraOffset::new(0.0, CAM_Y0, 0.0),
+            sensitivity: CameraSensitivity::default(),
+            transform: Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
+        }
     }
 }
 

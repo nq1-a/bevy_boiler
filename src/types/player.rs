@@ -2,46 +2,41 @@ use bevy::prelude::*;
 use bevy_rapier3d::prelude::*;
 
 use crate::consts::*;
+use crate::types::object::*;
 
 #[derive(Component)]
-pub struct Player;
+pub struct PlayerTag;
 
-type BasePlayer = (
-    Player,
-    RigidBody,
-    Collider,
-    ContactSkin,
-    Transform,
-    ExternalImpulse,
-    Velocity,
-    Damping,
-    Friction,
-    LockedAxes,
-    JumpCooldown,
-);
+#[derive(Bundle)]
+pub struct Player {
+    pub core: PlayerTag,
+    pub phys: PhysicsObject,
+    pub skin: ContactSkin,
+    pub impulse: ExternalImpulse,
+    pub damping: Damping,
+    pub locked_axes: LockedAxes,
+    pub jump_cooldown: JumpCooldown,
+}
 
 impl Player {
-    pub fn base() -> BasePlayer {
-        (
-            Self,
-            RigidBody::Dynamic,
-            Collider::capsule_y(PLR_H4, PLR_H4),
-            ContactSkin(PLR_CE * PLR_JE),
-            Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
-            ExternalImpulse::default(),
-            Velocity::default(),
-            Damping {
+    pub fn base() -> Player {
+        Player {
+            core: PlayerTag,
+            phys: PhysicsObject::base(
+                RigidBody::Dynamic,
+                Collider::capsule_y(PLR_H4, PLR_H4),
+                Transform::from_xyz(PLR_X0, PLR_Y0, PLR_Z0).looking_at(PLR_Y0 * Vec3::Y, Vec3::Y),
+            ),
+            skin: ContactSkin(PLR_CE * PLR_JE),
+            impulse: ExternalImpulse::default(),
+            damping: Damping {
                 linear_damping: 1.5,
                 angular_damping: 1.0,
             },
-            Friction {
-                coefficient: GLB_FD,
-                ..default()
-            },
             // X and Z axes (only yaw)
-            LockedAxes::from_bits(40u8).unwrap(),
-            JumpCooldown::new(PLR_JC),
-        )
+            locked_axes: LockedAxes::from_bits(40u8).unwrap(),
+            jump_cooldown: JumpCooldown::new(PLR_JC),
+        }
     }
 }
 

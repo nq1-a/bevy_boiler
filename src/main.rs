@@ -38,15 +38,9 @@ fn setup(
     let ball = meshes.add(Sphere::new(0.5));
     let mat1 = materials.add(Color::WHITE);
 
-    // Add player
-    commands.spawn((
-        Player::base(),
-    ));
-
-    // Add camera
-    commands.spawn((
-        FPCamera::base(),
-    ));
+    // Add player & camera
+    commands.spawn(Player::base());
+    commands.spawn(FPCamera::base());
 
     // Add light
     commands.spawn((
@@ -70,20 +64,24 @@ fn setup(
 
     // Add objects
     commands.spawn((
-        RigidBody::Fixed,
-        Collider::ball(0.5),
+        PhysicsObject::base(
+            RigidBody::Fixed,
+            Collider::ball(0.5),
+            Transform::from_xyz(0.0, 10.0, 0.0),
+        ),
         Mesh3d(ball.clone()),
         MeshMaterial3d(mat1.clone()),
-        Transform::from_xyz(0.0, 10.0, 0.0),
     ));
 
     commands.spawn((
-        RigidBody::Dynamic,
-        Collider::ball(0.5),
+        PhysicsObject::base(
+            RigidBody::Dynamic,
+            Collider::ball(0.5),
+            Transform::from_xyz(0.0, 4.0, 0.0),
+        ),
         Restitution::coefficient(1.0),
         Mesh3d(ball.clone()),
         MeshMaterial3d(mat1.clone()),
-        Transform::from_xyz(0.0, 4.0, 0.0),
     ));
 }
 
@@ -92,8 +90,8 @@ fn move_player(
     time: Res<Time<Fixed>>,
     kb_input: Res<ButtonInput<KeyCode>>,
     mouse_dp: Res<AccumulatedMouseMotion>,
-    plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<Player>>,
-    cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<Camera3d>, Without<Player>)>,
+    plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<PlayerTag>>,
+    cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<FPCameraTag>, Without<PlayerTag>)>,
 ) {
     let phys_ctx = phys_ctx.single().unwrap();
     let (plr_ent, mut plr_jc, mut plr_t, mut plr_imp) = plr.into_inner();
