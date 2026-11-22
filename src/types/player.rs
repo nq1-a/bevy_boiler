@@ -14,6 +14,7 @@ pub struct Player {
     pub skin: ContactSkin,
     pub impulse: ExternalImpulse,
     pub damping: Damping,
+    pub restitution: Restitution,
     pub locked_axes: LockedAxes,
     pub jump_cooldown: JumpCooldown,
 }
@@ -33,6 +34,7 @@ impl Player {
                 linear_damping: 1.5,
                 angular_damping: 1.0,
             },
+            restitution: Restitution::new(-1.0),
             // X and Z axes (only yaw)
             locked_axes: LockedAxes::from_bits(40u8).unwrap(),
             jump_cooldown: JumpCooldown::new(PLR_JC),
