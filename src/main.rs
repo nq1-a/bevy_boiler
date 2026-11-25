@@ -1,6 +1,6 @@
 use bevy::{
     input::mouse::AccumulatedMouseMotion,
-    window::{CursorGrabMode, CursorOptions},
+    window::{CursorGrabMode, CursorOptions, PresentMode, PrimaryWindow},
     prelude::*,
 };
 use bevy_rapier3d::prelude::*;
@@ -17,22 +17,69 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugins(RapierDebugRenderPlugin::default())
+        //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, (
             lock_cursor,
+            setup_ui,
             setup,
         ))
-        .add_systems(Update, move_player)
+        .add_systems(Update, (
+            fade_logo.run_if(|time: Res<Time>| {
+                time.elapsed_secs() < GUI_LM
+            }),
+            move_player,
+        ))
         .run();
 }
 
 // TODO: Make cursor locking toggleable for menus
 fn lock_cursor(
-    mut window: Query<&mut CursorOptions, With<Window>>,
+    mut p_window: Single<(&mut CursorOptions, &mut Window), With<PrimaryWindow>>,
 ) {
-    let mut cursor = window.single_mut().unwrap();
+    let (mut cursor, mut window) = p_window.into_inner();
+    window.present_mode = PresentMode::Mailbox;
     cursor.grab_mode = CursorGrabMode::Locked;
     cursor.visible = false;
+}
+
+fn setup_ui(
+    mut commands: Commands,
+    assets: ResMut<AssetServer>,
+) {
+    commands.spawn((
+        Node {
+            width: percent(100.0),
+            height: percent(100.0),
+            align_items: AlignItems::Center,
+            justify_content: JustifyContent::Center,
+            ..default()
+        },
+        children![(
+            (
+                SplashUi,
+                ImageNode::new(assets.load("game/logo.png")),
+                Node {
+                    border: px(0.0).all(),
+                    padding: px(0.0).all(),
+                    width: vmin(50.0),
+                    height: vmin(50.0),
+                    ..default()
+                },
+            ),
+        )],
+    ));
+}
+
+fn fade_logo(
+    time: Res<Time>,
+    logo: Single<&mut ImageNode, With<SplashUi>>,
+) {
+    let mut img = logo.into_inner();
+    img.color.set_alpha(
+        (1.0 - (time.elapsed_secs() - GUI_L1) / GUI_L2)
+            .clamp(0.0, 1.0)
+            .powi(5)
+    );
 }
 
 fn move_player(
@@ -43,6 +90,7 @@ fn move_player(
     plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<PlayerTag>>,
     cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<FPCameraTag>, Without<PlayerTag>)>,
 ) {
+    println!("{}", 1./time.delta_secs());
     let phys_ctx = phys_ctx.single().unwrap();
     let (plr_ent, mut plr_jc, mut plr_t, mut plr_imp) = plr.into_inner();
     let (mut cam_t, cam_o, cam_s) = cam.into_inner();

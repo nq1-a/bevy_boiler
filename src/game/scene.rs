@@ -10,13 +10,13 @@ pub fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // Load meshes & materials
-    let capsule = MeshCarrier::new(&mut meshes, Capsule3d::new(PLR_H4, PLR_H4));
+    let capsule = MeshCarrier::new(&mut meshes, Capsule3d::new(PLR_H4, PLR_H2));
     let ball = MeshCarrier::new(&mut meshes, Sphere::new(0.5));
     let mat1 = materials.add(Color::WHITE);
 
     // Add player & camera
-    commands.spawn((Player::base(&capsule),));
-    commands.spawn((FPCamera::base(),));
+    commands.spawn(Player::base(&capsule));
+    commands.spawn(FPCamera::base());
 
     // Add light
     commands.spawn((
