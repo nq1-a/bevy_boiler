@@ -6,9 +6,11 @@ use bevy::{
 use bevy_rapier3d::prelude::*;
 
 mod consts;
+mod game;
 mod types;
 
 use consts::*;
+use game::*;
 use types::*;
 
 fn main() {
@@ -16,73 +18,21 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugins(RapierDebugRenderPlugin::default())
-        .add_systems(Startup, lock_cursor)
-        .add_systems(Startup, setup)
+        .add_systems(Startup, (
+            lock_cursor,
+            setup,
+        ))
         .add_systems(Update, move_player)
         .run();
 }
 
+// TODO: Make cursor locking toggleable for menus
 fn lock_cursor(
     mut window: Query<&mut CursorOptions, With<Window>>,
 ) {
     let mut cursor = window.single_mut().unwrap();
     cursor.grab_mode = CursorGrabMode::Locked;
     cursor.visible = false;
-}
-
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    // Load meshes & materials
-    let capsule = MeshCarrier::new(&mut meshes, Capsule3d::new(PLR_H4, PLR_H4));
-    let ball = MeshCarrier::new(&mut meshes, Sphere::new(0.5));
-    let mat1 = materials.add(Color::WHITE);
-
-    // Add player & camera
-    commands.spawn(Player::base(&capsule));
-    commands.spawn(FPCamera::base());
-
-    // Add light
-    commands.spawn((
-        DirectionalLight {
-            color: Color::srgb(0.6, 0.63, 0.7),
-            shadow_maps_enabled: true,
-            ..default()
-        },
-        Transform::from_xyz(0.0, 0.0, 0.0).looking_at(Vec3::new(0.3, -1.0, 0.3), Vec3::Y),
-    ));
-
-    // Add ground
-    commands.spawn((
-        Collider::cuboid(100.0, 2.0, 100.0),
-        Transform::from_xyz(0.0, -1.0, 0.0),
-        Friction {
-            coefficient: GLB_FD,
-            ..default()
-        },
-    ));
-
-    // Add objects
-    commands.spawn((
-        PhysicsObject::base(
-            RigidBody::Fixed,
-            &ball,
-            Transform::from_xyz(0.0, 10.0, 0.0),
-        ),
-        MeshMaterial3d(mat1.clone()),
-    ));
-
-    commands.spawn((
-        PhysicsObject::base(
-            RigidBody::Dynamic,
-            &ball,
-            Transform::from_xyz(0.0, 4.0, 0.0),
-        ),
-        Restitution::coefficient(1.0),
-        MeshMaterial3d(mat1.clone()),
-    ));
 }
 
 fn move_player(
@@ -114,7 +64,7 @@ fn move_player(
     let ru = plr_t.rotation * Vec3::NEG_Z;
     let su = ru.rotate_y(FRAC_PI_2);
 
-    // Calculate translation
+    // Calculate new translation
     let dt = time.delta_secs();
     let mut rm: f32 = 0.0;
     let mut sm: f32 = 0.0;

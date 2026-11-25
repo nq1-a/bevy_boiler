@@ -3,6 +3,10 @@ use bevy_rapier3d::prelude::*;
 
 use crate::consts::*;
 
+// A physics object can represent any object that lives in
+// the physics simulation and interacts with other objects.
+// NOTE: I might move fixed bodies to a different object
+// depending on how I feel in the future.
 #[derive(Component)]
 pub struct PhysicsObjectTag;
 
@@ -38,6 +42,8 @@ impl PhysicsObject {
     }
 }
 
+// Contains both a mesh and its computed collider so we
+// only have to calculate it once.
 pub struct MeshCarrier {
     pub handle: Handle<Mesh>,
     pub collider: Collider,

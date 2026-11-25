@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 use crate::consts::*;
 
+// The actual world camera, plus any relevant information
+// like its position and sensitivity.
 #[derive(Component)]
 pub struct FPCameraTag;
 
@@ -26,6 +28,8 @@ impl FPCamera {
     }
 }
 
+// Something to store where the camera actually is.
+// NOTE: I might restructure this later
 #[derive(Component)]
 pub struct CameraOffset(pub Vec3);
 
@@ -39,6 +43,9 @@ impl Default for CameraOffset {
         {Self(Vec3::ZERO)}
 }
 
+// Something to store how much the camera angle should
+// change depending on how fast the mouse is moved.
+// NOTE: I might restructure this later
 #[derive(Component)]
 pub struct CameraSensitivity(pub Vec2);
 

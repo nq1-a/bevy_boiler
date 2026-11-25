@@ -4,6 +4,9 @@ use bevy_rapier3d::prelude::*;
 use crate::consts::*;
 use crate::types::object::*;
 
+// The thing that the user can actually control with their
+// movement keys. The camera will automatically lock onto
+// the player from a first-person perspective.
 #[derive(Component)]
 pub struct PlayerTag;
 
@@ -42,6 +45,8 @@ impl Player {
     }
 }
 
+// Something to hold how long until a jump is off cooldown.
+// NOTE: I might restructure this later
 #[derive(Component)]
 pub struct JumpCooldown(f32, f32);
 
