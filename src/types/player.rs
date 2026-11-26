@@ -23,8 +23,8 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn base(mesh: &MeshCarrier) -> Player {
-        Player {
+    pub fn base(mesh: &MeshCarrier) -> Self {
+        Self {
             core: PlayerTag,
             phys: PhysicsObject::base(
                 RigidBody::Dynamic,

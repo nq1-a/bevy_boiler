@@ -1,4 +1,10 @@
 pub use std::f32::consts::FRAC_PI_2;
+use std::sync::LazyLock;
+
+use rand::random;
+
+// NET_ID - Network peer ID
+pub static NET_ID: LazyLock<u64> = LazyLock::new(|| random());
 
 // GLB_FD - Default friction
 // GLB_RX - Maximum controller pitch

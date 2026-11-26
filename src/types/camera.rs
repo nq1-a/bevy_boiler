@@ -17,8 +17,8 @@ pub struct FPCamera {
 }
 
 impl FPCamera {
-    pub fn base() -> FPCamera {
-        FPCamera {
+    pub fn base() -> Self {
+        Self {
             core: FPCameraTag,
             camera: Camera3d::default(),
             offset: CameraOffset::new(0.0, CAM_Y0, 0.0),

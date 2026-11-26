@@ -34,7 +34,7 @@ fn main() {
 
 // TODO: Make cursor locking toggleable for menus
 fn lock_cursor(
-    mut p_window: Single<(&mut CursorOptions, &mut Window), With<PrimaryWindow>>,
+    p_window: Single<(&mut CursorOptions, &mut Window), With<PrimaryWindow>>,
 ) {
     let (mut cursor, mut window) = p_window.into_inner();
     window.present_mode = PresentMode::Mailbox;
@@ -90,7 +90,6 @@ fn move_player(
     plr: Single<(Entity, &mut JumpCooldown, &mut Transform, &mut ExternalImpulse), With<PlayerTag>>,
     cam: Single<(&mut Transform, &CameraOffset, &CameraSensitivity), (With<FPCameraTag>, Without<PlayerTag>)>,
 ) {
-    println!("{}", 1./time.delta_secs());
     let phys_ctx = phys_ctx.single().unwrap();
     let (plr_ent, mut plr_jc, mut plr_t, mut plr_imp) = plr.into_inner();
     let (mut cam_t, cam_o, cam_s) = cam.into_inner();

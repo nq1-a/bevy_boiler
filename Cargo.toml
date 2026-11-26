@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 bevy = { version = "0.20", features = ["dynamic_linking"] }
 bevy_rapier3d = "0.37"
+rand = "0.10.4"
 
 [profile.dev]
 opt-level = 1
